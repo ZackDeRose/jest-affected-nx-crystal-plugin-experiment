@@ -41,7 +41,8 @@
       "options": {
         "targetName": "test"
       }
-    }
+    },
+    "./jest-affected.ts"
   ],
   "targetDefaults": {
     "@nx/esbuild:esbuild": {
@@ -52,5 +53,6 @@
     "test": {
       "dependsOn": ["^build"]
     }
-  }
+  },
+  "useDaemonProcess": false
 }
