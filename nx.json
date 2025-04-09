@@ -54,5 +54,5 @@
       "dependsOn": ["^build"]
     }
   },
-  "useDaemonProcess": false
+  "useDaemonProcess": true
 }

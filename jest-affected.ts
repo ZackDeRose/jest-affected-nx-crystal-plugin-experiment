@@ -54,29 +54,35 @@ function gatherAffectedTestTargetNames(configFilePath: string): string[] {
     .filter((file) => file.length > 0);
 }
 
-function createParentTarget(affectedTestTargetNames: string[]) {
+function createParentTarget(affectedTestTargetFilePaths: string[]) {
   return {
     executor: 'nx:noop',
-    dependsOn: affectedTestTargetNames,
+    dependsOn: affectedTestTargetFilePaths.map(convertJestFilePathToTargetName),
     cache: true,
   };
 }
 
 function createAtomTargets(
   configPath: string,
-  testTargetNames: string[]
+  testFileTargetPaths: string[]
 ): ProjectConfiguration['targets'] {
   const result: ProjectConfiguration['targets'] = {};
-  for (let i = 0; i < testTargetNames.length; i++) {
-    result[testTargetNames[i]] = {
+  for (let i = 0; i < testFileTargetPaths.length; i++) {
+    result[convertJestFilePathToTargetName(testFileTargetPaths[i])] = {
       command: [
         'npx',
         'jest',
         `--configPath=${configPath}`,
-        testTargetNames[i],
+        testFileTargetPaths[i],
       ].join(' '),
       cache: true,
     };
   }
   return result;
+}
+
+function convertJestFilePathToTargetName(jestFilePath: string): string {
+  const pathParts = jestFilePath.split('/');
+  const fileName = pathParts[pathParts.length - 1];
+  return `jest-affected-child--${fileName.replace(/\.(test|spec)\.ts$/, '')}`;
 }
